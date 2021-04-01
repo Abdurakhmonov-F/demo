@@ -20,21 +20,21 @@ public class CarsController {
     }
     @PostMapping("/save")
     public Mono<Cars> save(@RequestBody Cars cars){
-        return carsRepository.save(cars);
+        return carsRepository.save(cars).log("save method accessed");
     }
     @GetMapping("/getAll")
     public Flux<Cars> getAll(){
-        return carsRepository.findAll();
+        return carsRepository.findAll().log("Get all method accessed");
     }
     @GetMapping("/finById/{id}")
     public Mono<ResponseEntity<Cars>> findById(@PathVariable String id){
-       return carsRepository.findById(id)
+       return carsRepository.findById(id).log("Found by Id")
                 .map(x -> ResponseEntity.ok(x))
                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     @PostMapping("/update")
     public Mono<ResponseEntity<Cars>> update(@RequestBody Cars cars){
-     return carsRepository.findById(cars.getId())
+     return carsRepository.findById(cars.getId()).log("update method accessed")
               .flatMap(x->{
                   x.setBrand(x.getBrand());
                   x.setId(x.getId());
@@ -49,7 +49,7 @@ public class CarsController {
     }
     @GetMapping("/delete/{id}")
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable String id){
-       return carsRepository.findById(id)
+       return carsRepository.findById(id).log("delete method accessed")
                .flatMap(x -> {
                    Mono<Void> delete = carsRepository.delete(x);
                    return delete;
